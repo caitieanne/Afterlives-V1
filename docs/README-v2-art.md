@@ -1,22 +1,48 @@
-# v2 Illustrated Art Production Plan
+# v2 Art Production Plan
 
-`afterlives-v2-art-checklist.xlsx` maps the illustrated (non-pixel) art needed to
-bring all 7 game species to the OnSpace fidelity standard.
+## Origin of the art (confirmed)
 
-The OnSpace set in this repo (services/petData.ts) follows a regular structure:
-8 moods (happy/neutral/excited/sad/hungry/sick/tired/dead) x 4 frames per stage
-= 32 frames per stage.
+The Afterlives character sprites are made in **PixelLab.ai**, an AI pixel-art
+character generator. The pipeline is:
 
-Current state vs a complete 7-species set:
-- HAVE 224 frames: Ghost, Swamp, Mothman (teen + adult); Sasquatch (teen only).
-- MISSING 672 frames for a full 4-stage set, or roughly 224 more for a 2-stage
-  (teen + adult) set.
-- Cthulhu, Nightcrawler, and Chupacabra have little or no character art and are
-  the bulk of the work (~384 frames).
-- Backgrounds: have 10, need ~4 more (Cthulhu and Nightcrawler habitats).
+1. Prompt a character (e.g. "an adorable kawaii mothman") from a rigged
+   `mannequin` template. PixelLab generates a pixel sprite.
+2. The sprite is **8-directional** (N, NE, E, SE, S, SW, W, NW) and **rigged with
+   keypoints**, so new directions and poses are generated, not redrawn.
+3. Animations are added two ways: built-in presets (`breathing-idle`, `walking`)
+   and **custom prompt-driven animations** you describe in plain language
+   (e.g. "taking a bubble bath in a white clawfoot tub", "the character dies and
+   turns into a cemetery plot", "hungry", "very happy", "sick").
+4. Export as a zip: `rotations/` (8 direction stills), `animations/<name>/<dir>/frame_NNN.png`,
+   and a `metadata.json` with the character prompt, keypoints, and frame index.
 
-Intended production method: Meshy (one 3D model per creature, render poses out).
+The pixel sprites are hosted on OnSpace only because the older Expo app
+(this repo) was built there; OnSpace is the HOST, not the source. The
+`cdn-ai.onspace.ai` URLs and the "add moonlight highlights" style filenames are
+OnSpace re-hosting and editing uploaded art, not the origin.
 
-The spreadsheet has three tabs: Summary (per-species rollup and pace math), Full
-Matrix (every species x stage x mood with have/missing), and Build Order
-(highest-impact-first sequence).
+Note: an earlier illustrated (full-colour cartoon) art set also exists on the
+OnSpace CDN and is what the current lander's "living diorama" shows. The PixelLab
+pixel sprites are the direction that actually matches the game. Decide which set
+v2 uses before scoping (see below).
+
+## Why this matters for production
+
+Because PixelLab characters are **rigged and prompt-driven**, extending a species
+is cheap: you reuse the character and request more animations/directions, rather
+than hand-drawing frames. A single custom animation is 4 frames per direction.
+Reference export ("an adorable kawaii mothman") contained:
+- 8 direction rotations
+- 2 preset animations (breathing-idle, walking)
+- 11 custom animations (moods + activities), 4 frames each
+
+## Checklist spreadsheet
+
+`afterlives-v2-art-checklist.xlsx` maps coverage across the 7 game species. Note
+the frame counts in it were scoped against the older OnSpace set (8 moods x 4
+frames per stage). Re-scope against the PixelLab workflow if v2 uses these pixel
+sprites: the unit of work becomes "generate the character + N custom animations
+per species," which is faster than the raw frame count implies.
+
+Species in the game: ghost, swamp, sasquatch, chupacabra, mothman, cthulhu,
+nightcrawler.
